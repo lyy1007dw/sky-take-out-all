@@ -12,7 +12,6 @@ public class JwtUtil {
     /**
      * 生成jwt
      * 使用Hs256算法, 私匙使用固定秘钥
-     *
      * @param secretKey jwt秘钥
      * @param ttlMillis jwt过期时间(毫秒)
      * @param claims    设置的信息
@@ -51,7 +50,8 @@ public class JwtUtil {
                 // 设置签名的秘钥
                 .setSigningKey(secretKey.getBytes(StandardCharsets.UTF_8))
                 // 设置需要解析的jwt
-                .parseClaimsJws(token).getBody();
+                .parseClaimsJws(token)
+                .getBody();
         return claims;
     }
 
