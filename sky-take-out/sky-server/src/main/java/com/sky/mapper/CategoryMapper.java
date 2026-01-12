@@ -1,5 +1,7 @@
 package com.sky.mapper;
 
+import com.github.pagehelper.Page;
+import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
@@ -17,4 +19,11 @@ public interface CategoryMapper {
             "values" +
             "(#{type}, #{name}, #{sort}, #{status}, #{createTime}, #{updateTime},#{createUser},#{updateUser})")
     public void insert(Category category);
+
+    /**
+     * 分类分页查询
+     * @param categoryPageQueryDTO 分类分页查询参数
+     * @return 分类分页结果
+     */
+    Page<Category> pageQuery(CategoryPageQueryDTO categoryPageQueryDTO);
 }
