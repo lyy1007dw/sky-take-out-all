@@ -8,6 +8,10 @@ import lombok.NoArgsConstructor;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+/**
+ * 员工实体类
+ * @author candong
+ */
 @Data
 @Builder
 @NoArgsConstructor
