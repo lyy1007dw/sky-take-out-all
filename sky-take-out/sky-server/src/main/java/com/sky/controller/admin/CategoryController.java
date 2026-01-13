@@ -42,4 +42,29 @@ public class CategoryController {
         PageResult pageResult = categoryService.pageQuery(categoryPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 启用禁用分类
+     * @param status 状态
+     * @param id 分类id
+     * @return 启用禁用结果
+     */
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("启用禁用菜品分类：{}, {}", id, status);
+        categoryService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 删除分类
+     * @param id 分类id
+     * @return 删除结果
+     */
+    @DeleteMapping
+    public Result delete(Long id){
+        log.info("删除分类：{}", id);
+        categoryService.delete(id);
+        return Result.success();
+    }
 }

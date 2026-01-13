@@ -9,10 +9,12 @@ import com.sky.dto.CategoryPageQueryDTO;
 import com.sky.entity.Category;
 import com.sky.mapper.CategoryMapper;
 import com.sky.result.PageResult;
+import com.sky.result.Result;
 import com.sky.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -68,5 +70,28 @@ public class CategoryServiceImpl implements CategoryService {
         List<Category> records = page.getResult();
 
         return new PageResult(total, records);
+    }
+
+    /**
+     * 启用禁用分类
+     * @param status 分类状态
+     * @param id 分类id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Category category = new Category();
+        category.setStatus(status);
+        category.setId(id);
+
+        categoryMapper.update(category);
+    }
+
+    /**
+     * 删除分类
+     * @param id 分类id
+     */
+    @Override
+    public void delete(Long id) {
+        categoryMapper.delete(id);
     }
 }
