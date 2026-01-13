@@ -4,6 +4,8 @@ import com.sky.dto.DishDTO;
 import com.sky.dto.DishPageQueryDTO;
 import com.sky.result.PageResult;
 
+import java.util.List;
+
 /**
  * 菜品
  * @author can dong
@@ -21,4 +23,11 @@ public interface DishService {
      * @return 菜品分页结果
      */
     PageResult pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 批量删除菜品
+     * @param ids 菜品id
+     */
+    void deleteByIds(List<Long> ids);
+
 }

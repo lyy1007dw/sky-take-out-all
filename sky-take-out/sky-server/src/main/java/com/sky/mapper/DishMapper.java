@@ -9,6 +9,8 @@ import com.sky.vo.DishVO;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
 
+import java.util.List;
+
 /**
  * 菜品
  * @author can dong
@@ -36,4 +38,18 @@ public interface DishMapper {
      * @return 菜品分页结果
      */
     Page<DishVO> pageQuery(DishPageQueryDTO dishPageQueryDTO);
+
+    /**
+     * 根据id查询菜品数据
+     * @param id 菜品id
+     * @return 菜品数据
+     */
+    @Select("select * from dish where id = #{id}")
+    Dish getById(Long id);
+
+    /**
+     * 批量删除菜品
+     * @param ids 菜品id
+     */
+    void deleteByIds(List<Long> ids);
 }
