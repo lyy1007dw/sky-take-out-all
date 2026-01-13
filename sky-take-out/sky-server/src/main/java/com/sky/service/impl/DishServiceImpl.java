@@ -114,6 +114,7 @@ public class DishServiceImpl implements DishService {
      * @param id 菜品id
      * @return 菜品数据
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public DishVO getByIdWithFlavor(Long id) {
         // 根据id查询菜品数据
@@ -133,6 +134,7 @@ public class DishServiceImpl implements DishService {
      * 修改菜品
      * @param dishDTO 菜品数据
      */
+    @Transactional(rollbackFor = Exception.class)
     @Override
     public void update(DishDTO dishDTO) {
         // 属性拷贝
@@ -170,5 +172,15 @@ public class DishServiceImpl implements DishService {
         dish.setStatus(status);
         dish.setId(id);
         dishMapper.update(dish);
+    }
+
+    /**
+     * 根据分类id查询菜品
+     * @param categoryId 分类id
+     * @return 菜品列表
+     */
+    @Override
+    public List<Dish> list(Long categoryId) {
+        return dishMapper.list(categoryId);
     }
 }
