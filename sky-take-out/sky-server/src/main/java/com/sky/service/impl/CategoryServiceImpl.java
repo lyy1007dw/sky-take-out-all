@@ -13,12 +13,10 @@ import com.sky.mapper.CategoryMapper;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetmealMapper;
 import com.sky.result.PageResult;
-import com.sky.result.Result;
 import com.sky.service.CategoryService;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,12 +49,12 @@ public class CategoryServiceImpl implements CategoryService {
         category.setStatus(StatusConstant.DISABLE);
 
         // 设置创建时间和修改时间
-        category.setCreateTime(LocalDateTime.now());
-        category.setUpdateTime(LocalDateTime.now());
-
-        // 创建人和修改人id
-        category.setCreateUser(BaseContext.getCurrentId());
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        category.setCreateTime(LocalDateTime.now());
+//        category.setUpdateTime(LocalDateTime.now());
+//
+//        // 创建人和修改人id
+//        category.setCreateUser(BaseContext.getCurrentId());
+//        category.setUpdateUser(BaseContext.getCurrentId());
 
         // 进行创建
         categoryMapper.insert(category);
@@ -127,14 +125,19 @@ public class CategoryServiceImpl implements CategoryService {
         Category category = new Category();
         BeanUtils.copyProperties(categoryDTO, category);
 
-        // 设置修改时间
-        category.setUpdateTime(LocalDateTime.now());
-
-        // 设置修改人
-        category.setUpdateUser(BaseContext.getCurrentId());
+//        // 设置修改时间
+//        category.setUpdateTime(LocalDateTime.now());
+//
+//        // 设置修改人
+//        category.setUpdateUser(BaseContext.getCurrentId());
         categoryMapper.update(category);
     }
 
+    /**
+     * 按类型查询分类
+     * @param type 分类类型
+     * @return 查询结果
+     */
     @Override
     public List<Category> list(Integer type) {
         return categoryMapper.list(type);
