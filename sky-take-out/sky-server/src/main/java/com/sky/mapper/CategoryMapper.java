@@ -6,6 +6,9 @@ import com.sky.entity.Category;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
+
+import java.util.List;
 
 /**
  * @author can dong
@@ -40,4 +43,11 @@ public interface CategoryMapper {
      */
     @Delete("delete from category where id = #{id}")
     void delete(Long id);
+
+    /**
+     * 根据类型查询
+     * @param type 分类类型
+     * @return 分类列表
+     */
+    List<Category> list(Integer type);
 }
