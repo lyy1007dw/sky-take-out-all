@@ -43,4 +43,11 @@ public interface DishService {
      * @param dishDTO 修改的菜品数据
      */
     void update(DishDTO dishDTO);
+
+    /**
+     * 启用、禁用菜品
+     * @param status 菜品状态
+     * @param id 菜品id
+     */
+    void startOrStop(Integer status, Long id);
 }
