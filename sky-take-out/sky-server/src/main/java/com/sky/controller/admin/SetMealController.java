@@ -43,4 +43,17 @@ public class SetMealController {
         PageResult pageResult = setMealService.pageQuery(setmealPageQueryDTO);
         return Result.success(pageResult);
     }
+
+    /**
+     * 起售停售套餐
+     * @param status 状态，1起售 0停售
+     * @param id 套餐id
+     * @return 启售停售结果
+     */
+    @PostMapping("/status/{status}")
+    public Result startOrStop(@PathVariable Integer status, Long id){
+        log.info("启用或禁用套餐：{}", id);
+        setMealService.startOrStop(status, id);
+        return Result.success();
+    }
 }

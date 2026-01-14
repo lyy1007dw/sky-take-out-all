@@ -20,4 +20,11 @@ public interface SetMealService {
      * @return 查询结果
      */
     PageResult pageQuery(SetmealPageQueryDTO setmealPageQueryDTO);
+
+    /**
+     * 套餐起售、停售
+     * @param status 状态
+     * @param id 套餐id
+     */
+    void startOrStop(Integer status, Long id);
 }

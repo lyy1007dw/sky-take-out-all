@@ -72,4 +72,17 @@ public class SetMealServiceImpl implements SetMealService {
         // 返回结果
         return new PageResult(page.getTotal(), page.getResult());
     }
+
+    /**
+     * 套餐起售停售
+     * @param status 状态
+     * @param id 套餐id
+     */
+    @Override
+    public void startOrStop(Integer status, Long id) {
+        Setmeal setmeal = new Setmeal();
+        setmeal.setStatus(status);
+        setmeal.setId(id);
+        setMealMapper.update(setmeal);
+    }
 }
