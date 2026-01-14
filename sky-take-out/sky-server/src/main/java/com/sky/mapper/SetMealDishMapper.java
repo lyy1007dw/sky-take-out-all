@@ -1,6 +1,7 @@
 package com.sky.mapper;
 
 import com.sky.entity.SetmealDish;
+import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -15,4 +16,19 @@ public interface SetMealDishMapper {
      * @param setMealDishes 套餐菜品数据
      */
     void insertBatch(List<SetmealDish> setMealDishes);
+
+    /**
+     * 根据套餐id查询套餐菜品数据
+     * @param setmealId 套餐id
+     * @return 套餐菜品数据
+     */
+    @Delete("delete from setmeal_dish where setmeal_id = #{setmealId}")
+    void deleteBySetmealId(Long setmealId);
+
+    /**
+     * 根据套餐id查询套餐菜品数据
+     * @param id 套餐id
+     * @return 套餐菜品数据
+     */
+    List<SetmealDish> getBySetMaelId(Long id);
 }

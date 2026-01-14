@@ -5,6 +5,7 @@ import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 import com.sky.result.Result;
 import com.sky.service.SetMealService;
+import com.sky.vo.SetmealVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -69,5 +70,29 @@ public class SetMealController {
         log.info("批量删除套餐，ids：{}", ids);
         setMealService.delete(ids);
         return Result.success();
+    }
+
+    /**
+     * 修改套餐
+     * @param setmealDTO 修改的套餐数据
+     * @return 修改结果
+     */
+    @PutMapping
+    public Result update(@RequestBody SetmealDTO setmealDTO){
+        log.info("修改套餐：{}", setmealDTO);
+        setMealService.update(setmealDTO);
+        return Result.success();
+    }
+
+    /**
+     * 根据id查询套餐数据
+     * @param id 套餐id
+     * @return 套餐数据
+     */
+    @GetMapping("/{id}")
+    public Result<SetmealVO> getById(@PathVariable Long id){
+        log.info("获取套餐id为{}的详细信息", id);
+        SetmealVO setmealVO = setMealService.getByIdWithDish(id);
+        return Result.success(setmealVO);
     }
 }
