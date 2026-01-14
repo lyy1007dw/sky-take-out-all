@@ -3,11 +3,14 @@ package com.sky.service.impl;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
+import com.sky.constant.StatusConstant;
 import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
+import com.sky.entity.Dish;
 import com.sky.entity.Setmeal;
 import com.sky.entity.SetmealDish;
 import com.sky.exception.DeletionNotAllowedException;
+import com.sky.mapper.DishMapper;
 import com.sky.mapper.SetMealDishMapper;
 import com.sky.mapper.SetMealMapper;
 import com.sky.result.PageResult;
@@ -19,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Objects;
 
 /**
  * @author can dong
@@ -30,6 +34,9 @@ public class SetMealServiceImpl implements SetMealService {
 
     @Autowired
     private SetMealDishMapper setMealDishMapper;
+
+    @Autowired
+    private DishMapper dishMapper;
     /**
      * 新增套餐
      * @param setmealDTO 新增的套餐数据
@@ -82,6 +89,17 @@ public class SetMealServiceImpl implements SetMealService {
      */
     @Override
     public void startOrStop(Integer status, Long id) {
+        // 套餐如果存在未启售菜品时无法启售
+        if(status == StatusConstant.ENABLE){
+            List<Dish> dishList = dishMapper.getBySetMaelId(id);
+            if(dishList != null && !dishList.isEmpty()){
+                dishList.forEach(dish ->{
+                    if(dish.getStatus() == StatusConstant.DISABLE){
+                        throw new DeletionNotAllowedException(MessageConstant.SETMEAL_ENABLE_FAILED);
+                    }
+                });
+            }
+        }
         Setmeal setmeal = new Setmeal();
         setmeal.setStatus(status);
         setmeal.setId(id);
