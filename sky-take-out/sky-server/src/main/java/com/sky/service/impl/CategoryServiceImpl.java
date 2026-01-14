@@ -107,7 +107,7 @@ public class CategoryServiceImpl implements CategoryService {
         // 判断当前分类是否关联了套餐，如果关联了，无法删除
         Integer setmealCount = setmealMapper.countByCategoryId(id);
         if(setmealCount > 0){
-            throw new DeletionNotAllowedException(MessageConstant.DISH_BE_RELATED_BY_SETMEAL);
+            throw new DeletionNotAllowedException(MessageConstant.CATEGORY_BE_RELATED_BY_SETMEAL);
         }
 
         // 进行删除
