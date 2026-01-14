@@ -40,6 +40,13 @@
         where id = #{id}
     </update>
 
+    <delete id="deleteByIds">
+        delete from setmeal where id in
+        <foreach item="id" collection="ids" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </delete>
+
     <select id="getSetMealIdsByDishIds" resultType="java.lang.Long">
         select setmeal_id from setmeal_dish where dish_id in
         <foreach collection="ids" item="dishId" open="(" close=")" separator=",">

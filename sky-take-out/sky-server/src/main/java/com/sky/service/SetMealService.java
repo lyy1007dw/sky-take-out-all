@@ -4,6 +4,8 @@ import com.sky.dto.SetmealDTO;
 import com.sky.dto.SetmealPageQueryDTO;
 import com.sky.result.PageResult;
 
+import java.util.List;
+
 /**
  * @author can dong
  */
@@ -27,4 +29,10 @@ public interface SetMealService {
      * @param id 套餐id
      */
     void startOrStop(Integer status, Long id);
+
+    /**
+     * 批量删除套餐
+     * @param ids 套餐id列表
+     */
+    void delete(List<Long> ids);
 }

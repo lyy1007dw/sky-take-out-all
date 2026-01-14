@@ -52,4 +52,18 @@ public interface SetMealMapper {
      */
     @AutoFill(value = OperationType.UPDATE)
     void update(Setmeal setmeal);
+
+    /**
+     * 根据id查询套餐数据
+     * @param id 套餐id
+     * @return 套餐数据
+     */
+    @Select("select * from setmeal where id = #{id}")
+    Setmeal getById(Long id);
+
+    /**
+     * 批量删除套餐
+     * @param ids 套餐id列表
+     */
+    void deleteByIds(List<Long> ids);
 }

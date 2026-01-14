@@ -9,6 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 /**
  * 套餐管理
  * @author can dong
@@ -54,6 +56,18 @@ public class SetMealController {
     public Result startOrStop(@PathVariable Integer status, Long id){
         log.info("启用或禁用套餐：{}", id);
         setMealService.startOrStop(status, id);
+        return Result.success();
+    }
+
+    /**
+     * 批量删除套餐
+     * @param ids 套餐id数组
+     * @return 删除结果
+     */
+    @DeleteMapping
+    public Result delete(@RequestParam List<Long> ids){
+        log.info("批量删除套餐，ids：{}", ids);
+        setMealService.delete(ids);
         return Result.success();
     }
 }
