@@ -21,6 +21,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
@@ -122,6 +123,9 @@ public class SetMealServiceImpl implements SetMealService {
 
         // 批量删除套餐
         setMealMapper.deleteByIds(ids);
+
+        // 批量删除套餐菜品关系表中的数据
+        setMealDishMapper.deleteBySetmealIds(ids);
     }
 
     /**
@@ -138,7 +142,9 @@ public class SetMealServiceImpl implements SetMealService {
         setMealMapper.update(setmeal);
 
         // 删除原有的套餐和菜品的关联数据
-        setMealDishMapper.deleteBySetmealId(setmealDTO.getId());
+        List<Long> setMealIds = new ArrayList<>();
+        setMealIds.add(setmealDTO.getId());
+        setMealDishMapper.deleteBySetmealIds(setMealIds);
 
         List<SetmealDish> setmealDishes = setmealDTO.getSetmealDishes();
         if(setmealDishes != null && !setmealDishes.isEmpty()) {
