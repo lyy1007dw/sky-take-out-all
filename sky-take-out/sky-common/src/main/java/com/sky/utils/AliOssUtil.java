@@ -5,6 +5,7 @@ import com.aliyun.oss.common.auth.CredentialsProviderFactory;
 import com.aliyun.oss.common.auth.EnvironmentVariableCredentialsProvider;
 import com.aliyun.oss.common.comm.SignVersion;
 import com.aliyun.oss.model.PutObjectResult;
+import com.sky.constant.MessageConstant;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.extern.slf4j.Slf4j;
@@ -70,7 +71,7 @@ public class AliOssUtil {
                     + "such as not being able to access the network.");
             System.out.println("Error Message:" + ce.getMessage());
         } catch (IOException e) {
-            log.error("文件上传失败");
+            log.error(MessageConstant.UPLOAD_FAILED);
             throw new RuntimeException(e);
         } finally {
             if (ossClient != null) {
