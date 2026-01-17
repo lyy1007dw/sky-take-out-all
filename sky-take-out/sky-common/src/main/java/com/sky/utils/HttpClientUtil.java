@@ -22,6 +22,7 @@ import java.util.Map;
 
 /**
  * Http工具类
+ * @author can dong
  */
 public class HttpClientUtil {
 
@@ -29,9 +30,9 @@ public class HttpClientUtil {
 
     /**
      * 发送GET方式请求
-     * @param url
-     * @param paramMap
-     * @return
+     * @param url 请求地址
+     * @param paramMap 请求参数
+     * @return 请求结果
      */
     public static String doGet(String url,Map<String,String> paramMap){
         // 创建Httpclient对象
@@ -75,9 +76,9 @@ public class HttpClientUtil {
 
     /**
      * 发送POST方式请求
-     * @param url
-     * @param paramMap
-     * @return
+     * @param url 请求地址
+     * @param paramMap 请求参数
+     * @return 请求结果
      * @throws IOException
      */
     public static String doPost(String url, Map<String, String> paramMap) throws IOException {
@@ -122,9 +123,9 @@ public class HttpClientUtil {
 
     /**
      * 发送POST方式请求
-     * @param url
-     * @param paramMap
-     * @return
+     * @param url 请求地址
+     * @param paramMap 请求参数
+     * @return 请求结果
      * @throws IOException
      */
     public static String doPost4Json(String url, Map<String, String> paramMap) throws IOException {
