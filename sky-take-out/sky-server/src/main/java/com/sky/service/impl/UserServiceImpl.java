@@ -50,17 +50,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserLoginVO wxLogin(UserLoginDTO userLoginDTO) {
         // 1.获取微信登录的openid
-        // 封装请求内容
-        Map<String, String> map = new HashMap<>();
-        map.put("appid", weChatProperties.getAppid());
-        map.put("secret", weChatProperties.getSecret());
-        map.put("js_code", userLoginDTO.getCode());
-        map.put("grant_type", "authorization_code");
-        // 发送请求
-        String json = HttpClientUtil.doGet(WIN_LOGIN, map);
-        // 解析返回的结果
-        JSONObject jsonObject = JSON.parseObject(json);
-        String openid = jsonObject.getString("openid");
+        String openid = getOpenid(userLoginDTO.getCode());
 
         // 2.判断openid是否有效
         if (openid == null) {
@@ -88,5 +78,19 @@ public class UserServiceImpl implements UserService {
         userLoginVO.setOpenid(openid);
         userLoginVO.setToken(token);
         return userLoginVO;
+    }
+
+    private String getOpenid(String code){
+        // 封装请求内容
+        Map<String, String> map = new HashMap<>();
+        map.put("appid", weChatProperties.getAppid());
+        map.put("secret", weChatProperties.getSecret());
+        map.put("js_code", code);
+        map.put("grant_type", "authorization_code");
+        // 发送请求
+        String json = HttpClientUtil.doGet(WIN_LOGIN, map);
+        // 解析返回的结果
+        JSONObject jsonObject = JSON.parseObject(json);
+        return jsonObject.getString("openid");
     }
 }
