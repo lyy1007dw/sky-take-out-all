@@ -4,6 +4,7 @@ import com.sky.entity.AddressBook;
 import org.apache.ibatis.annotations.Delete;
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Select;
 
 import java.util.List;
 
@@ -35,4 +36,12 @@ public interface AddressBookMapper {
      */
     @Delete("delete from address_book where id = #{id}")
     void deleteById(Integer id);
+
+    /**
+     * 根据id查询地址数据
+     * @param id 要查询的id
+     * @return 查询到的地址数据
+     */
+    @Select("select * from address_book where id = #{id}")
+    AddressBook getById(Integer id);
 }

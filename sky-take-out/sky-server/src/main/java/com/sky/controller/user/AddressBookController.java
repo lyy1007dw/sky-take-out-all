@@ -56,4 +56,16 @@ public class AddressBookController {
         addressBookService.delete(id);
         return Result.success();
     }
+
+    /**
+     * 根据id查询地址
+     * @param id 地址id
+     * @return 查询结果
+     */
+    @GetMapping("/{id}")
+    public Result<AddressBook> getById(@PathVariable Integer id){
+        log.info("根据id查询地址：{}", id);
+        AddressBook addressBook = addressBookService.getById(id);
+        return Result.success(addressBook);
+    }
 }

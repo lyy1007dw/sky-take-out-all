@@ -49,4 +49,14 @@ public class AddressBookServiceImpl implements AddressBookService {
     public void delete(Integer id){
         addressBookMapper.deleteById(id);
     }
+
+    /**
+     * 根据id查询地址
+     * @param id 查询的id
+     * @return 地址
+     */
+    @Override
+    public AddressBook getById(Integer id) {
+        return addressBookMapper.getById(id);
+    }
 }

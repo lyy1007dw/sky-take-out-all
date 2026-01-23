@@ -25,4 +25,11 @@ public interface AddressBookService {
      * @param id 地址id
      */
     void delete(Integer id);
+
+    /**
+     * 根据id查询地址
+     * @param id 地址id
+     * @return 地址
+     */
+    AddressBook getById(Integer id);
 }
