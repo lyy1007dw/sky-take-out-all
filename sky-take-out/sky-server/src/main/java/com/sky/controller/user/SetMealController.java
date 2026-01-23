@@ -1,13 +1,12 @@
 package com.sky.controller.user;
 
-import com.sky.entity.Category;
 import com.sky.entity.Setmeal;
-import com.sky.mapper.SetMealMapper;
 import com.sky.result.Result;
 import com.sky.service.SetMealService;
 import com.sky.vo.DishItemVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -31,6 +30,7 @@ public class SetMealController {
      * @return 套餐数据
      */
     @GetMapping("/list")
+    @Cacheable(cacheNames = "setMealCache", key = "#categoryId")
     public Result<List<Setmeal>> list(Long categoryId){
         log.info("根据分类id{}查询套餐数据", categoryId);
         List<Setmeal> setmealList = setMealService.list(categoryId);
