@@ -38,4 +38,10 @@ public interface AddressBookService {
      * @param addressBook 修改的参数
      */
     void update(AddressBook addressBook);
+
+    /**
+     * 设置默认地址
+     * @param addressBook 地址数据
+     */
+    void setDefault(AddressBook addressBook);
 }
