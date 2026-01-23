@@ -60,21 +60,21 @@ public class UserServiceImpl implements UserService {
         // 3.判断用户是否存在
         User user = userMapper.getByOpenId(openid);
         // 新用户自动注册
-        User newUser = new User();
         if(user == null){
-            newUser.setOpenid(openid);
-            newUser.setCreateTime(LocalDateTime.now());
-            userMapper.insert(newUser);
+            user = new User();
+            user.setOpenid(openid);
+            user.setCreateTime(LocalDateTime.now());
+            userMapper.insert(user);
         }
 
         // 4.为用户生成jwt令牌
         Map<String, Object> claims = new HashMap<>();
-        claims.put(JwtClaimsConstant.USER_ID, newUser.getId());
+        claims.put(JwtClaimsConstant.USER_ID, user.getId());
         String token = JwtUtil.createJWT(jwtProperties.getUserSecretKey(), jwtProperties.getUserTtl(), claims);
 
         // 5.封装结果返回
         UserLoginVO userLoginVO = new UserLoginVO();
-        userLoginVO.setId(newUser.getId());
+        userLoginVO.setId(user.getId());
         userLoginVO.setOpenid(openid);
         userLoginVO.setToken(token);
         return userLoginVO;
