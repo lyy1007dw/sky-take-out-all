@@ -32,4 +32,10 @@ public interface AddressBookService {
      * @return 地址
      */
     AddressBook getById(Integer id);
+
+    /**
+     * 修改地址
+     * @param addressBook 修改的参数
+     */
+    void update(AddressBook addressBook);
 }

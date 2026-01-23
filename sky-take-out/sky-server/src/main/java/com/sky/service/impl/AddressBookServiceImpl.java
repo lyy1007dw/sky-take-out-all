@@ -59,4 +59,12 @@ public class AddressBookServiceImpl implements AddressBookService {
     public AddressBook getById(Integer id) {
         return addressBookMapper.getById(id);
     }
+
+    /**
+     * 修改地址
+     * @param addressBook 修改的参数
+     */
+    public void update(AddressBook addressBook) {
+        addressBookMapper.update(addressBook);
+    }
 }

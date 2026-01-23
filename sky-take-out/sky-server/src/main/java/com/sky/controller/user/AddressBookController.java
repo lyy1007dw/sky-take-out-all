@@ -68,4 +68,16 @@ public class AddressBookController {
         AddressBook addressBook = addressBookService.getById(id);
         return Result.success(addressBook);
     }
+
+    /**
+     * 修改地址
+     * @param addressBook 地址数据
+     * @return 修改结果
+     */
+    @PutMapping
+    public Result update(@RequestBody AddressBook addressBook){
+        log.info("修改地址：{}", addressBook);
+        addressBookService.update(addressBook);
+        return Result.success();
+    }
 }

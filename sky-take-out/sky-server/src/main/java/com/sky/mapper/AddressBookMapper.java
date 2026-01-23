@@ -44,4 +44,10 @@ public interface AddressBookMapper {
      */
     @Select("select * from address_book where id = #{id}")
     AddressBook getById(Integer id);
+
+    /**
+     * 动态修改地址数据
+     * @param addressBook 修改后的地址数据
+     */
+    void update(AddressBook addressBook);
 }
