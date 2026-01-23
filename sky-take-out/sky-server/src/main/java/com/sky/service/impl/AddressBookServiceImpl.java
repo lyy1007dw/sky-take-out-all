@@ -85,4 +85,18 @@ public class AddressBookServiceImpl implements AddressBookService {
         addressBook.setIsDefault(1);
         addressBookMapper.update(addressBook);
     }
+
+    /**
+     * 获取默认地址
+     * @return 默认地址
+     */
+    @Override
+    public List<AddressBook> getDefault() {
+       AddressBook addressBook = new AddressBook();
+       addressBook.setUserId(BaseContext.getCurrentId());
+       addressBook.setIsDefault(1);
+
+       List<AddressBook> addressBookList = addressBookMapper.list(addressBook);
+       return addressBookList;
+    }
 }

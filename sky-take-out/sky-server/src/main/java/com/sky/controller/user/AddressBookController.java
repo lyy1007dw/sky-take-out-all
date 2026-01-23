@@ -92,4 +92,18 @@ public class AddressBookController {
          addressBookService.setDefault(addressBook);
          return Result.success();
      }
+
+     /**
+      * 获取默认地址
+      * @return 默认地址
+      */
+     @GetMapping("/default")
+     public Result<AddressBook> getDefault() {
+         log.info("获取默认地址");
+         List<AddressBook> addressBookList = addressBookService.getDefault();
+         if(addressBookList != null && addressBookList.size() == 1){
+             return Result.success(addressBookList.get(0));
+         }
+         return Result.error("没有识别到默认地址");
+     }
  }
