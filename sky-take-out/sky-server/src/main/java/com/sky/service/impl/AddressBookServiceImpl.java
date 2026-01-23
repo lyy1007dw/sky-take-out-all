@@ -30,4 +30,23 @@ public class AddressBookServiceImpl implements AddressBookService {
         // 执行查询并返回结果
         return addressBookMapper.list(addressBook);
     }
+
+    /**
+     * 新增地址
+     * @param addressBook 新增的参数
+     */
+    @Override
+    public void add(AddressBook addressBook) {
+        addressBook.setUserId(BaseContext.getCurrentId());
+        addressBook.setIsDefault(0);
+        addressBookMapper.insert(addressBook);
+    }
+
+    /**
+     * 删除地址
+     * @param id 删除的id
+     */
+    public void delete(Integer id){
+        addressBookMapper.deleteById(id);
+    }
 }
