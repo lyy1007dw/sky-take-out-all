@@ -57,7 +57,7 @@ public class AddressBookServiceImpl implements AddressBookService {
      * @return 地址
      */
     @Override
-    public AddressBook getById(Integer id) {
+    public AddressBook getById(Long id) {
         return addressBookMapper.getById(id);
     }
 

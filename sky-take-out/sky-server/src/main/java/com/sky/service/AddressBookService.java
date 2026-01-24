@@ -31,7 +31,7 @@ public interface AddressBookService {
      * @param id 地址id
      * @return 地址
      */
-    AddressBook getById(Integer id);
+    AddressBook getById(Long id);
 
     /**
      * 修改地址

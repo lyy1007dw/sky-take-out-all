@@ -40,7 +40,7 @@ public interface AddressBookMapper {
      * @return 查询到的地址数据
      */
     @Select("select * from address_book where id = #{id}")
-    AddressBook getById(Integer id);
+    AddressBook getById(Long id);
 
     /**
      * 动态修改地址数据

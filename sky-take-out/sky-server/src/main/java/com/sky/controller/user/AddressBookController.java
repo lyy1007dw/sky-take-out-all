@@ -4,7 +4,6 @@ import com.sky.context.BaseContext;
 import com.sky.entity.AddressBook;
 import com.sky.result.Result;
 import com.sky.service.AddressBookService;
-import io.swagger.models.auth.In;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -63,7 +62,7 @@ public class AddressBookController {
      * @return 查询结果
      */
     @GetMapping("/{id}")
-    public Result<AddressBook> getById(@PathVariable Integer id){
+    public Result<AddressBook> getById(@PathVariable Long id){
         log.info("根据id查询地址：{}", id);
         AddressBook addressBook = addressBookService.getById(id);
         return Result.success(addressBook);
