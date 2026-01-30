@@ -1,8 +1,11 @@
 package com.sky.service.impl;
 
 import com.alibaba.fastjson.JSONObject;
+import com.github.pagehelper.Page;
+import com.github.pagehelper.PageHelper;
 import com.sky.constant.MessageConstant;
 import com.sky.context.BaseContext;
+import com.sky.dto.OrdersPageQueryDTO;
 import com.sky.dto.OrdersPaymentDTO;
 import com.sky.dto.OrdersSubmitDTO;
 import com.sky.entity.*;
@@ -10,10 +13,12 @@ import com.sky.exception.AddressBookBusinessException;
 import com.sky.exception.OrderBusinessException;
 import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
+import com.sky.result.PageResult;
 import com.sky.service.OrderService;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderSubmitVO;
+import com.sky.vo.OrderVO;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -157,5 +162,45 @@ public class OrderServiceImpl implements OrderService {
                 .build();
 
         ordersMapper.update(orders);
+    }
+
+    /**
+     * 订单分页查询
+     *
+     * @param page     页码
+     * @param pageSize 每页数量
+     * @param status   订单状态
+     * @return 订单分页查询结果
+     */
+    @Override
+    public PageResult historyPage(Integer page, Integer pageSize, Integer status) {
+        // 开启分页查询
+        PageHelper.startPage(page, pageSize);
+
+        OrdersPageQueryDTO ordersPageQueryDTO = new OrdersPageQueryDTO();
+        ordersPageQueryDTO.setStatus(status);
+        ordersPageQueryDTO.setUserId(BaseContext.getCurrentId());
+
+        // 分页查询条件
+        Page<Orders> ordersList = ordersMapper.historyPage(ordersPageQueryDTO);
+
+        List<OrderVO> orderVOList = new ArrayList<>();
+
+        // 封装订单VO
+        if (ordersList != null && ordersList.getTotal() > 0) {
+            for (Orders order : ordersList) {
+                Long id = order.getId(); // 订单id
+                // 根据订单id查询订单详情
+                List<OrderDetail> orderDetails = orderDetailMapper.listByOrderId(id);
+                // 判断订单详情是否为空
+                if (orderDetails != null && !orderDetails.isEmpty()) {
+                    OrderVO orderVO = new OrderVO();
+                    BeanUtils.copyProperties(order, orderVO);
+                    orderVO.setOrderDetailList(orderDetails);
+                    orderVOList.add(orderVO);
+                }
+            }
+        }
+        return new PageResult(ordersList.getTotal(), orderVOList);
     }
 }

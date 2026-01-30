@@ -64,7 +64,7 @@
             s.category_id = c.id
         <where>
             <if test="name != null and name !=''">
-                s.name like concat(name like concat('%', #{name}, '%'))
+                s.name like concat('%', #{name}, '%')
             </if>
             <if test="categoryId != null">
                 and s.category_id = #{categoryId}
@@ -85,7 +85,7 @@
                 and status = #{status}
             </if>
             <if test="name != null">
-                and name like concat(name like concat('%', #{name}, '%'))
+                and name like concat('%', #{name}, '%')
             </if>
         </where>
         order by update_time desc
