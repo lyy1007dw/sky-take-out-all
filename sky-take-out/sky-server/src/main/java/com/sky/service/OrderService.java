@@ -52,4 +52,10 @@ public interface OrderService {
      * @param id 订单ID
      */
     void cancel(Long id);
+
+    /**
+     * 再来一单
+     * @param id 订单ID
+     */
+    void repetition(Long id);
 }
