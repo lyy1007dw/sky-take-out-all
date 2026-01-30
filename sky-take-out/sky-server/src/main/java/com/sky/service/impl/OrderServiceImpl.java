@@ -222,4 +222,41 @@ public class OrderServiceImpl implements OrderService {
         orderVO.setOrderDetailList(orderDetails);
         return orderVO;
     }
+
+    /**
+     * 取消订单
+     *
+     * @param id 订单id
+     */
+    @Override
+    public void cancel(Long id) {
+        // 根据id查询订单
+        Orders orders = ordersMapper.getById(id);
+
+        // 查看订单是否存在
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+
+        // 待支付和待接单状态下，可以直接取消订单
+        if(orders.getStatus() > 2){
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+
+        Orders updateOrders = new Orders();
+        updateOrders.setId(orders.getId());
+
+        // 如果待接单状态下取消订单，需要退款
+        if(orders.getStatus() == 2){
+            // 调用微信支付接口，进行退款。由于没有商户号，这里的逻辑删除
+            // 更改订单状态
+            updateOrders.setStatus(Orders.CANCELLED);
+        }
+
+        // 更新订单状态
+        updateOrders.setStatus(Orders.CANCELLED);
+        updateOrders.setCancelReason("用户取消");
+        updateOrders.setCancelTime(LocalDateTime.now());
+        ordersMapper.update(updateOrders);
+    }
 }
