@@ -239,7 +239,7 @@ public class OrderServiceImpl implements OrderService {
         }
 
         // 待支付和待接单状态下，可以直接取消订单
-        if(orders.getStatus() > 2){
+        if (orders.getStatus() > 2) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
@@ -247,7 +247,7 @@ public class OrderServiceImpl implements OrderService {
         updateOrders.setId(orders.getId());
 
         // 如果待接单状态下取消订单，需要退款
-        if(orders.getStatus() == 2){
+        if (orders.getStatus() == 2) {
             // 调用微信支付接口，进行退款。由于没有商户号，这里的逻辑删除
             // 更改订单状态
             updateOrders.setStatus(Orders.CANCELLED);
@@ -284,5 +284,58 @@ public class OrderServiceImpl implements OrderService {
         }
         // 批量插入购物车数据
         shoppingCartMapper.insertBatch(shoppingCartList);
+    }
+
+    /**
+     * 订单条件查询
+     *
+     * @param ordersPageQueryDTO 订单查询条件
+     * @return 订单分页查询结果
+     */
+    @Override
+    public PageResult conditionSearch(OrdersPageQueryDTO ordersPageQueryDTO) {
+        // 开启分页查询
+        PageHelper.startPage(ordersPageQueryDTO.getPage(), ordersPageQueryDTO.getPageSize());
+
+        // 执行分页查询
+        Page<Orders> ordersList = ordersMapper.historyPage(ordersPageQueryDTO);
+
+        List<OrderVO> orderVOList = new ArrayList<>();
+        String orderDishes;
+
+        // 封装结果
+        if (ordersList != null && ordersList.getTotal() > 0) {
+            for (Orders orders : ordersList) {
+                Long id = orders.getId();
+                // 根据id查询订单详情
+                List<OrderDetail> orderDetails = orderDetailMapper.listByOrderId(id);
+                if (orderDetails != null && !orderDetails.isEmpty()){
+                    // 获取订单详情中的菜名，用字符串展示
+                    orderDishes = getOrderDishStr(orderDetails);
+                    OrderVO orderVO = new OrderVO();
+                    BeanUtils.copyProperties(orders, orderVO);
+                    orderVO.setOrderDishes(orderDishes);
+                    orderVOList.add(orderVO);
+                }
+            }
+        } else {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        return new PageResult(ordersList.getTotal(), orderVOList);
+    }
+
+    /**
+     * 获取订单菜品字符串
+     *
+     * @param orderDetails 订单详情列表
+     * @return 订单菜品字符串
+     */
+    private String getOrderDishStr(List<OrderDetail> orderDetails){
+        StringBuilder orderDishesSb = new StringBuilder();
+        // 将每条订单详情中的菜名用字符串展示（格式：宫保鸡丁*3；）
+        for (OrderDetail orderDetail : orderDetails) {
+            orderDishesSb.append(orderDetail.getName()).append("*").append(orderDetail.getNumber()).append("；");
+        }
+        return orderDishesSb.toString();
     }
 }
