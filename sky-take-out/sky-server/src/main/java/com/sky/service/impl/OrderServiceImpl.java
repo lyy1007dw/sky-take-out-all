@@ -409,4 +409,24 @@ public class OrderServiceImpl implements OrderService {
 
         ordersMapper.update(updateOrders);
     }
+
+    /**
+     * 派送订单
+     *
+     * @param id 订单id
+     */
+    @Override
+    public void delivery(Long id) {
+        // 查询订单信息
+        Orders orders = ordersMapper.getById(id);
+        // 只有待派送的订单（已接单）可以执行派送订单任务
+        if (orders == null || !orders.getStatus().equals(Orders.CONFIRMED)) {
+            throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
+        }
+        Orders updateOrders = new Orders();
+        updateOrders.setId(id);
+        updateOrders.setStatus(Orders.DELIVERY_IN_PROGRESS);
+        updateOrders.setDeliveryTime(LocalDateTime.now());
+        ordersMapper.update(updateOrders);
+    }
 }
