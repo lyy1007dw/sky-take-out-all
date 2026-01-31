@@ -319,8 +319,6 @@ public class OrderServiceImpl implements OrderService {
                     orderVOList.add(orderVO);
                 }
             }
-        } else {
-            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
         }
         return new PageResult(ordersList.getTotal(), orderVOList);
     }
