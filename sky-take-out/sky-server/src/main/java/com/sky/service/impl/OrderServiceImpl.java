@@ -429,4 +429,31 @@ public class OrderServiceImpl implements OrderService {
         updateOrders.setDeliveryTime(LocalDateTime.now());
         ordersMapper.update(updateOrders);
     }
+
+    /**
+     * 取消订单（商家端）
+     *
+     * @param ordersCancelDTO 取消订单需要的参数
+     */
+    @Override
+    public void cancel(OrdersCancelDTO ordersCancelDTO) {
+        // 获取订单信息
+        Orders orders = ordersMapper.getById(ordersCancelDTO.getId());
+        // 如果订单不存在抛出异常
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 如果用户完成了支付，需要进行退款
+        if (orders.getPayStatus().equals(Orders.PAID)) {
+            // 调用微信支付接口，进行退款。由于没有商户号，这里的逻辑删除
+            log.info("商家取消订单并为用户退款");
+        }
+        // 封装新的订单信息
+        Orders updateOrders = new Orders();
+        updateOrders.setId(ordersCancelDTO.getId());
+        updateOrders.setStatus(Orders.CANCELLED);
+        updateOrders.setCancelReason(ordersCancelDTO.getCancelReason());
+        updateOrders.setCancelTime(LocalDateTime.now());
+        ordersMapper.update(updateOrders);
+    }
 }
