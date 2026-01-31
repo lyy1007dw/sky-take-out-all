@@ -221,6 +221,13 @@ public class OrderServiceImpl implements OrderService {
         // 查询订单详情
         List<OrderDetail> orderDetails = orderDetailMapper.listByOrderId(id);
         orderVO.setOrderDetailList(orderDetails);
+        
+        // 设置订单菜品信息
+        if (orderDetails != null && !orderDetails.isEmpty()) {
+            String orderDishes = getOrderDishStr(orderDetails);
+            orderVO.setOrderDishes(orderDishes);
+        }
+        
         return orderVO;
     }
 
