@@ -51,6 +51,10 @@ sky:
       endpoint: ${sky.aliyun.oss.endpoint}
       region: ${sky.aliyun.oss.region}
       bucket-name: ${sky.aliyun.oss.bucket-name}
+  shop:
+    address: ${sky.shop.address}
+  baidu:
+    ak: ${sky.baidu.ak}
   wechat:
     appid: ${sky.wechat.appid}
     secret: ${sky.wechat.secret}

@@ -1,5 +1,6 @@
 package com.sky.service.impl;
 
+import com.alibaba.fastjson.JSONArray;
 import com.alibaba.fastjson.JSONObject;
 import com.github.pagehelper.Page;
 import com.github.pagehelper.PageHelper;
@@ -13,6 +14,7 @@ import com.sky.exception.ShoppingCartBusinessException;
 import com.sky.mapper.*;
 import com.sky.result.PageResult;
 import com.sky.service.OrderService;
+import com.sky.utils.HttpClientUtil;
 import com.sky.utils.WeChatPayUtil;
 import com.sky.vo.OrderPaymentVO;
 import com.sky.vo.OrderStatisticsVO;
@@ -21,13 +23,13 @@ import com.sky.vo.OrderVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 /**
  * @author can dong
@@ -35,6 +37,10 @@ import java.util.List;
 @Service
 @Slf4j
 public class OrderServiceImpl implements OrderService {
+    @Value("${sky.shop.address}")
+    private String shopAddress;
+    @Value("${sky.baidu.ak}")
+    private String ak;
     @Autowired
     private OrdersMapper ordersMapper;
     @Autowired
@@ -71,6 +77,10 @@ public class OrderServiceImpl implements OrderService {
         if (shoppingCartList == null || shoppingCartList.isEmpty()) {
             throw new ShoppingCartBusinessException(MessageConstant.SHOPPING_CART_IS_NULL);
         }
+
+        // 检查地址是否超出配送范围
+        String userAddress = addressBook.getProvinceName() + addressBook.getCityName() + addressBook.getDistrictName() + addressBook.getDetail();
+        checkOutOfRange(userAddress);
 
         // 2.保存订单信息
         Orders orders = new Orders();
@@ -221,13 +231,13 @@ public class OrderServiceImpl implements OrderService {
         // 查询订单详情
         List<OrderDetail> orderDetails = orderDetailMapper.listByOrderId(id);
         orderVO.setOrderDetailList(orderDetails);
-        
+
         // 设置订单菜品信息
         if (orderDetails != null && !orderDetails.isEmpty()) {
             String orderDishes = getOrderDishStr(orderDetails);
             orderVO.setOrderDishes(orderDishes);
         }
-        
+
         return orderVO;
     }
 
@@ -317,7 +327,7 @@ public class OrderServiceImpl implements OrderService {
                 Long id = orders.getId();
                 // 根据id查询订单详情
                 List<OrderDetail> orderDetails = orderDetailMapper.listByOrderId(id);
-                if (orderDetails != null && !orderDetails.isEmpty()){
+                if (orderDetails != null && !orderDetails.isEmpty()) {
                     // 获取订单详情中的菜名，用字符串展示
                     orderDishes = getOrderDishStr(orderDetails);
                     OrderVO orderVO = new OrderVO();
@@ -336,7 +346,7 @@ public class OrderServiceImpl implements OrderService {
      * @param orderDetails 订单详情列表
      * @return 订单菜品字符串
      */
-    private String getOrderDishStr(List<OrderDetail> orderDetails){
+    private String getOrderDishStr(List<OrderDetail> orderDetails) {
         StringBuilder orderDishesSb = new StringBuilder();
         // 将每条订单详情中的菜名用字符串展示（格式：宫保鸡丁*3；）
         for (OrderDetail orderDetail : orderDetails) {
@@ -390,7 +400,7 @@ public class OrderServiceImpl implements OrderService {
         Orders orders = ordersMapper.getById(ordersRejectionDTO.getId());
 
         // 只有待接单状态下可以执行拒单操作
-        if(orders == null || !orders.getStatus().equals(Orders.TO_BE_CONFIRMED)){
+        if (orders == null || !orders.getStatus().equals(Orders.TO_BE_CONFIRMED)) {
             throw new OrderBusinessException(MessageConstant.ORDER_STATUS_ERROR);
         }
 
@@ -476,5 +486,63 @@ public class OrderServiceImpl implements OrderService {
         updateOrders.setStatus(Orders.COMPLETED);
         updateOrders.setDeliveryTime(LocalDateTime.now());
         ordersMapper.update(updateOrders);
+    }
+
+    /**
+     * 校验地址是否超出配送范围
+     *
+     * @param address 地址
+     */
+    private void checkOutOfRange(String address) {
+        // 1.首先将店铺地址转换为经纬度
+        Map<String, String> params = new LinkedHashMap<String, String>();
+        params.put("address", shopAddress);
+        params.put("output", "json");
+        params.put("ak", ak);
+        String shopAddressJson = HttpClientUtil.doGet("https://api.map.baidu.com/geocoding/v3/?", params);
+        // 解析数据
+        JSONObject jsonObject = JSONObject.parseObject(shopAddressJson);
+        if (!jsonObject.getString("status").equals("0")) {
+            throw new OrderBusinessException("店铺地址解析失败");
+        }
+        // 获取店铺的经纬度坐标
+        JSONObject location = jsonObject.getJSONObject("result").getJSONObject("location");
+        String lng = location.getString("lng");
+        String lat = location.getString("lat");
+        String shopLngLat = lat + "," + lng;
+
+        // 2.获取用户的经纬度
+        params.put("address", address);
+        String userAddressJson = HttpClientUtil.doGet("https://api.map.baidu.com/geocoding/v3/?", params);
+        jsonObject = JSONObject.parseObject(userAddressJson);
+        if (!jsonObject.getString("status").equals("0")) {
+            throw new OrderBusinessException("用户地址解析失败");
+        }
+        // 获取用户的经纬度坐标
+        JSONObject userLocation = jsonObject.getJSONObject("result").getJSONObject("location");
+        String userLng = userLocation.getString("lng");
+        String userLat = userLocation.getString("lat");
+        String userLngLat = userLat + "," + userLng;
+
+        // 3.计算两地位置距离
+        Map<String, String> routeParams = new LinkedHashMap<String, String>();
+        routeParams.put("origin", shopLngLat);
+        routeParams.put("destination", userLngLat);
+        routeParams.put("step_info", "0");
+        routeParams.put("ak", ak);
+        
+        // 进行路线规划
+        String routePlanningJson = HttpClientUtil.doGet("https://api.map.baidu.com/directionlite/v1/driving?", routeParams);
+        jsonObject = JSONObject.parseObject(routePlanningJson);
+        if (!jsonObject.getString("status").equals("0")) {
+            throw new OrderBusinessException("路线规划失败");
+        }
+        // 获取两地之间的距离
+        JSONObject result = jsonObject.getJSONObject("result");
+        JSONArray jsonArray = (JSONArray) result.get("routes");
+        Integer distance = ((JSONObject) jsonArray.get(0)).getInteger("distance");  // 获取两地之间的距离
+        if (distance > 5000) {
+            throw new OrderBusinessException("地址超出配送范围");
+        }
     }
 }

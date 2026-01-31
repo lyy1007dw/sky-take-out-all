@@ -16,6 +16,10 @@ sky:
     port: 6379
     password: 123456
     database: 10
+  shop:
+    address: 安徽省宿州市埇桥区云集商业步行街
+  baidu:
+    ak: jEGawmfllwKBdLwG4Mj6Tw0tQhW89WMB
   wechat:
     appid: wx0320368698f0885f
     secret: 49111a07611c3c3f2f6bab9e417b07ff
