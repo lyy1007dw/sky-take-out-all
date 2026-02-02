@@ -415,6 +415,7 @@ public class OrderServiceImpl implements OrderService {
         updateOrders.setId(ordersRejectionDTO.getId());
         updateOrders.setStatus(Orders.CANCELLED);
         updateOrders.setRejectionReason(ordersRejectionDTO.getRejectionReason());
+        updateOrders.setCancelReason(ordersRejectionDTO.getRejectionReason()); // 同时设置取消原因
         updateOrders.setCancelTime(LocalDateTime.now());
 
         ordersMapper.update(updateOrders);
