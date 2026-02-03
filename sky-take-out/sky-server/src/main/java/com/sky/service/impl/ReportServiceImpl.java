@@ -85,14 +85,10 @@ public class ReportServiceImpl implements ReportService {
             // 首先进行日期数据转换 LocalDate->LocalDateTime
             LocalDateTime beginTime = LocalDateTime.of(localDate, LocalTime.MIN);
             LocalDateTime endTime = LocalDateTime.of(localDate, LocalTime.MAX);
-            // 封装查询条件
-            Map<String, Object> map = new HashMap<>();
-            map.put("end", endTime);
             // 获取全部用户
-            Integer totalUser = userMapper.countByMap(map);
+            Integer totalUser = getUserCount(null, endTime);
             // 获取新增用户
-            map.put("begin", beginTime);
-            Integer newUser = userMapper.countByMap(map);
+            Integer newUser = getUserCount(beginTime, endTime);
             newUserList.add(newUser);
             totalUserList.add(totalUser);
         }
@@ -121,5 +117,19 @@ public class ReportServiceImpl implements ReportService {
             dateList.add(begin);
         }
         return dateList;
+    }
+
+    /**
+     * 获取用户数量
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
+     * @return 用户数量
+     */
+    private Integer getUserCount(LocalDateTime begin, LocalDateTime end){
+        Map<String, Object> map = new HashMap<>();
+        map.put("begin", begin);
+        map.put("end", end);
+        return userMapper.countByMap(map);
     }
 }
