@@ -543,7 +543,7 @@ public class OrderServiceImpl implements OrderService {
         routeParams.put("destination", userLngLat);
         routeParams.put("step_info", "0");
         routeParams.put("ak", ak);
-        
+
         // 进行路线规划
         String routePlanningJson = HttpClientUtil.doGet("https://api.map.baidu.com/directionlite/v1/driving?", routeParams);
         jsonObject = JSONObject.parseObject(routePlanningJson);
@@ -557,5 +557,26 @@ public class OrderServiceImpl implements OrderService {
         if (distance > 5000) {
             throw new OrderBusinessException("地址超出配送范围");
         }
+    }
+
+    /**
+     * 催单
+     *
+     * @param id 订单id
+     */
+    @Override
+    public void reminder(Long id) {
+        // 得到订单信息
+        Orders orders = ordersMapper.getById(id);
+        if (orders == null) {
+            throw new OrderBusinessException(MessageConstant.ORDER_NOT_FOUND);
+        }
+        // 客户催单
+        Map<String, Object> map = new HashMap<>();
+        map.put("type", 2);  // 1为开单提醒 2为客户催单
+        map.put("orderId", id);
+        map.put("content", "订单号:" + orders.getNumber());
+        String result = JSONObject.toJSONString(map);
+        webSocketServer.sendToAllClient(result);
     }
 }
