@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Select;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author can dong
@@ -66,4 +67,11 @@ public interface OrdersMapper {
      */
     @Select("select * from orders where status = #{status} and order_time < #{orderTime}")
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
+
+    /**
+     * 根据条件查询订单
+     * @param map 查询条件
+     * @return 订单信息
+     */
+    Double getByMap(Map<String, Object> map);
 }
