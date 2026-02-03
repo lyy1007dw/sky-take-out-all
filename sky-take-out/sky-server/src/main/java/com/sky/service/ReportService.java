@@ -1,6 +1,7 @@
 package com.sky.service;
 
 import com.sky.vo.OrderReportVO;
+import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 
@@ -33,4 +34,12 @@ public interface ReportService {
      * @return 订单统计结果
      */
     OrderReportVO ordersStatistics(LocalDate begin, LocalDate end);
+
+    /**
+     * 获取Top10菜品
+     * @param begin 开始时间
+     * @param end 结束时间
+     * @return Top10菜品结果
+     */
+    SalesTop10ReportVO top10(LocalDate begin, LocalDate end);
 }
