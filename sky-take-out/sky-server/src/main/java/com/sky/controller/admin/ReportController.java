@@ -25,14 +25,15 @@ public class ReportController {
 
     /**
      * 营业额统计
+     *
      * @param begin 开始时间
-     * @param end 结束时间
+     * @param end   结束时间
      * @return 营业额统计结果
      */
     @RequestMapping("/turnoverStatistics")
     public Result<TurnoverReportVO> turnoverStatistics(
             @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate begin,
-            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end){
+            @DateTimeFormat(pattern = "yyyy-MM-dd") LocalDate end) {
         log.info("营业额统计，开始时间：{}，结束时间：{}", begin, end);
         TurnoverReportVO turnoverReportVO = reportService.turnoverStatistics(begin, end);
         return Result.success(turnoverReportVO);
