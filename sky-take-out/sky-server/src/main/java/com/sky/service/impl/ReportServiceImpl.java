@@ -5,15 +5,21 @@ import com.sky.entity.Orders;
 import com.sky.mapper.OrdersMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.ReportService;
-import com.sky.vo.OrderReportVO;
-import com.sky.vo.SalesTop10ReportVO;
-import com.sky.vo.TurnoverReportVO;
-import com.sky.vo.UserReportVO;
-import io.swagger.models.auth.In;
+import com.sky.service.WorkSpaceService;
+import com.sky.vo.*;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import javax.servlet.http.HttpServletResponse;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -33,6 +39,9 @@ public class ReportServiceImpl implements ReportService {
 
     @Autowired
     private UserMapper userMapper;
+
+    @Autowired
+    private WorkSpaceService workSpaceService;
 
     /**
      * 营业额统计
@@ -152,6 +161,13 @@ public class ReportServiceImpl implements ReportService {
                 .build();
     }
 
+    /**
+     * 销量排名
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
+     * @return 销量排名结果
+     */
     @Override
     public SalesTop10ReportVO top10(LocalDate begin, LocalDate end) {
         // 时间转换
@@ -166,6 +182,61 @@ public class ReportServiceImpl implements ReportService {
                 .nameList(StringUtils.join(nameList, ","))
                 .numberList(StringUtils.join(numberList, ","))
                 .build();
+    }
+
+    /**
+     * 导出近30天运营数据
+     * @param response 响应
+     */
+    @Override
+    public void getBusinessDataExport(HttpServletResponse response) {
+        // 1.获取概览数据
+        LocalDate today = LocalDate.now();
+        LocalDate beginDate = today.minusDays(30);
+        LocalDate endDate = today.minusDays(1);
+        BusinessDataVO businessData = workSpaceService.
+                getBusinessData(LocalDateTime.of(beginDate, LocalTime.MIN), LocalDateTime.of(endDate, LocalTime.MAX));
+        // 2.写入Excel中
+        InputStream in = this.getClass()
+                .getClassLoader()
+                .getResourceAsStream("template/运营数据报表模板.xlsx");
+        try {
+            // 2.1基于提供好的模板文件创建一个新的Excel表格对象
+            XSSFWorkbook workbook = new XSSFWorkbook(in);
+            // 2.2获取模板中的Sheet对象
+            XSSFSheet sheet = workbook.getSheetAt(0);
+            // 2.3填写时间数据
+            sheet.getRow(1).getCell(1).setCellValue(beginDate + "至" + endDate);
+            // 2.4填写概览数据
+            XSSFRow row = sheet.getRow(3);
+            row.getCell(2).setCellValue(businessData.getTurnover());
+            row.getCell(4).setCellValue(businessData.getOrderCompletionRate());
+            row.getCell(6).setCellValue(businessData.getNewUsers());
+            row = sheet.getRow(4);
+            row.getCell(2).setCellValue(businessData.getValidOrderCount());
+            row.getCell(4).setCellValue(businessData.getUnitPrice());
+
+            // 3.获取明细数据
+            for (int i = 0; i < 30; i++) {
+                LocalDate date = beginDate.plusDays(i);
+                BusinessDataVO data = workSpaceService.getBusinessData(LocalDateTime.of(date, LocalTime.MIN), LocalDateTime.of(date, LocalTime.MAX));
+                row = sheet.getRow(7 + i);
+                row.getCell(1).setCellValue(date.toString());
+                row.getCell(2).setCellValue(data.getTurnover());
+                row.getCell(3).setCellValue(data .getValidOrderCount());
+                row.getCell(4).setCellValue(data.getNewUsers());
+                row.getCell(5).setCellValue(data.getUnitPrice());
+                row.getCell(6).setCellValue(data.getNewUsers());
+            }
+            // 4.将Excel文件写入到响应中
+            workbook.write(response.getOutputStream());
+
+            // 5.关闭资源
+            workbook.close();
+            in.close();
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 
     /**

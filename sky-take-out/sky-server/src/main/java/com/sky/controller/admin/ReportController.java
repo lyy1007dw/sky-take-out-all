@@ -7,12 +7,13 @@ import com.sky.vo.SalesTop10ReportVO;
 import com.sky.vo.TurnoverReportVO;
 import com.sky.vo.UserReportVO;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.poi.ss.formula.functions.T;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.servlet.http.HttpServletResponse;
 import java.time.LocalDate;
 
 /**
@@ -85,5 +86,15 @@ public class ReportController {
         log.info("获取Top10菜品，开始时间：{}，结束时间：{}", begin, end);
         SalesTop10ReportVO salesTop10ReportVO = reportService.top10(begin, end);
         return Result.success(salesTop10ReportVO);
+    }
+
+    /**
+     * 导出近30天运营数据
+     * @param response 响应
+     */
+    @GetMapping("/export")
+    public void getBusinessDataExport(HttpServletResponse response) {
+        log.info("导出近30天运营数据");
+        reportService.getBusinessDataExport(response);
     }
 }
