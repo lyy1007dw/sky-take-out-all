@@ -3,6 +3,7 @@ package com.sky.controller.admin;
 import com.sky.result.Result;
 import com.sky.service.WorkSpaceService;
 import com.sky.vo.BusinessDataVO;
+import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +42,11 @@ public class WorkSpaceController {
         return Result.success(businessDataVO);
     }
 
+    /**
+     * 获取订单概览数据
+     *
+     * @return 订单概览数据
+     */
     @GetMapping("/overviewOrders")
     public Result<OrderOverViewVO> getOrderOverView() {
         log.info("获取今日订单概览数据");
@@ -49,5 +55,20 @@ public class WorkSpaceController {
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         OrderOverViewVO orderOverViewVO = workSpaceService.getOrderOverView(begin, end);
         return Result.success(orderOverViewVO);
+    }
+
+    /**
+     * 获取菜品概览数据
+     *
+     * @return 菜品概览数据
+     */
+    @GetMapping("/overviewDishes")
+    public Result<DishOverViewVO> getDishOverView() {
+        log.info("获取今日菜品概览数据");
+        // 获取今日时间
+        LocalDateTime begin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        DishOverViewVO dishOverViewVO = workSpaceService.getDishOverView(begin, end);
+        return Result.success(dishOverViewVO);
     }
 }
