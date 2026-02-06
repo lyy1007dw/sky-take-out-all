@@ -5,6 +5,7 @@ import com.sky.service.WorkSpaceService;
 import com.sky.vo.BusinessDataVO;
 import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
+import com.sky.vo.SetmealOverViewVO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -70,5 +71,15 @@ public class WorkSpaceController {
         LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
         DishOverViewVO dishOverViewVO = workSpaceService.getDishOverView(begin, end);
         return Result.success(dishOverViewVO);
+    }
+
+    @GetMapping("/overviewSetmeals")
+    public Result<SetmealOverViewVO> getSetealOverView() {
+        log.info("获取今日套餐概览数据");
+        // 获取今日时间
+        LocalDateTime begin = LocalDateTime.of(LocalDate.now(), LocalTime.MIN);
+        LocalDateTime end = LocalDateTime.of(LocalDate.now(), LocalTime.MAX);
+        SetmealOverViewVO setmealOverViewVO = workSpaceService.getSetmealOverView(begin, end);
+        return Result.success(setmealOverViewVO);
     }
 }

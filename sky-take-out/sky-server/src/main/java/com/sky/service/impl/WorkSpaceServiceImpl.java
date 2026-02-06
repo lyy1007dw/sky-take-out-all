@@ -4,11 +4,13 @@ import com.sky.constant.StatusConstant;
 import com.sky.entity.Orders;
 import com.sky.mapper.DishMapper;
 import com.sky.mapper.OrdersMapper;
+import com.sky.mapper.SetMealMapper;
 import com.sky.mapper.UserMapper;
 import com.sky.service.WorkSpaceService;
 import com.sky.vo.BusinessDataVO;
 import com.sky.vo.DishOverViewVO;
 import com.sky.vo.OrderOverViewVO;
+import com.sky.vo.SetmealOverViewVO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -29,6 +31,9 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
 
     @Autowired
     private DishMapper dishMapper;
+
+    @Autowired
+    private SetMealMapper setMealMapper;
     /**
      * 获取今日数据
      *
@@ -132,6 +137,31 @@ public class WorkSpaceServiceImpl implements WorkSpaceService {
 
         // 3.返回结果
         return DishOverViewVO.builder()
+                .sold(sold)
+                .discontinued(discontinued)
+                .build();
+    }
+
+    /**
+     * 获取套餐概览数据
+     *
+     * @param begin 开始时间
+     * @param end   结束时间
+     * @return SetmealOverViewVO 套餐概览数据
+     */
+    @Override
+    public SetmealOverViewVO getSetmealOverView(LocalDateTime begin, LocalDateTime end) {
+        // 1.获取起售状态套餐
+        Map<String, Object> map = new HashMap<>();
+        map.put("status", StatusConstant.ENABLE);
+        Integer sold = setMealMapper.countByMap(map);
+
+        // 2.获取停售状态套餐
+        map.put("status", StatusConstant.DISABLE);
+        Integer discontinued = setMealMapper.countByMap(map);
+
+        // 3.返回结果
+        return SetmealOverViewVO.builder()
                 .sold(sold)
                 .discontinued(discontinued)
                 .build();
