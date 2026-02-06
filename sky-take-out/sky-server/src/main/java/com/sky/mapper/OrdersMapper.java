@@ -71,9 +71,9 @@ public interface OrdersMapper {
     List<Orders> getByStatusAndOrderTimeLT(Integer status, LocalDateTime orderTime);
 
     /**
-     * 根据条件查询订单
+     * 根据条件查询营业额
      * @param map 查询条件
-     * @return 订单信息
+      * @return 营业额
      */
     Double getByMap(Map<String, Object> map);
 
